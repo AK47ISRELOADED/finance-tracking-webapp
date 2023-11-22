@@ -4,6 +4,7 @@
 import React from 'react'
 import { useState } from 'react';
 import ('./App.css')
+import 'remixicon/fonts/remixicon.css'
 
 
 
@@ -14,7 +15,6 @@ const Tracking = () => {
   const [income, setIncome] = useState([]);
 
   const [description, setDescription] = useState('');
-  const [id, setid] = useState('');
   const [amount, setAmount] = useState('');
   const [amount2, setAmount2] = useState('');
   const [date, setDate] = useState('');
@@ -38,7 +38,7 @@ const Tracking = () => {
       setIncomeSource('');
       setAmount('');
       setDate('');
-      setid('')
+      // setid('')
     } else{
       alert('Please fill in the fields.');
     }
@@ -73,10 +73,53 @@ const Tracking = () => {
   const totalExpenses = expenses.reduce((total, item) => total + item.amount2, 0);
 
  
-  const handleDelete = id=> {
+  const handleDelete = (id ) => {
     const updatedExpenses = expenses.filter(expense => expense.id !== id);
     setExpenses(updatedExpenses);
   }; 
+  const handleDelete2 = (id) => {
+    const updatedIncome = income.filter(income => income.id !== id);
+    setIncome(updatedIncome);
+  }; 
+
+
+  
+  const handleEdit = (id, updatedExpense) => {
+    const updatedExpenses = expenses.map(expense =>
+      expense.id === id ? updatedExpense : expense
+      );
+      setExpenses(updatedExpenses);
+  };
+
+
+
+
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm2, setSearchTerm2] = useState('');
+  // const [selectedCategory, setSelectedCategory] = useState('');
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+  const filteredExpenses = expenses.filter((expense) => {
+    const matchesSearch = expense.category.toLowerCase().includes(searchTerm.toLowerCase());
+   
+    return matchesSearch;
+  
+  });
+
+  const handleSearch2 = (e) => {
+    setSearchTerm2(e.target.value);
+  };
+  const filteredIncome = income.filter((income) => {
+    const matchesSearch = income.source.toLowerCase().includes(searchTerm2.toLowerCase());
+   
+    return matchesSearch;
+  
+  });
+
+
 
 
 
@@ -125,11 +168,14 @@ const Tracking = () => {
           <div id="info2">
           <div id='income-info'>
               <h2>Income</h2>
-              
+              <input id='search-bar' type="text" placeholder="search income" value={searchTerm2} onChange={handleSearch2} />
+
               <ul>
-                {income.map((item) =>(
+                {filteredIncome.map((item) =>(
                   <li key={item.id}>
                     {item.source} - ₹{item.amount} - {item.date}
+                    <button id='delete-butt' onClick={() => handleDelete2(item.id)}>Delete</button>
+
                   </li>
                 ))}
               </ul>
@@ -137,13 +183,13 @@ const Tracking = () => {
 
               <div id='expense-info'>
                 <h2>Expenses</h2>
+                <input id='search-bar' type="text" placeholder="search expenses" value={searchTerm} onChange={handleSearch} />
                 <ul>
-                  {expenses.map((expense) => (
+                  {filteredExpenses.map((expense) => (
                     <li key={expense.id}>
                       {expense.id}-{expense.description} - ₹{expense.amount2} - {expense.date}- {expense.category}
-                      <button onClick={() => handleDelete(expenses.id)}>Delete</button>
-
-                    </li>
+                      <button id='delete-butt' onClick={() => handleDelete(expense.id)}>  <i class="ri-delete-bin-line"></i> </button>
+                      </li>
                   ))}
                 </ul>
                 </div>
